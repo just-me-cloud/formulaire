@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulaire de Recueil des Besoins — DigiPlus Consulting</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
+<style>
+  :root {
+    --teal: #1DBDB3;
+    --teal-dark: #0F8F86;
+    --teal-light: #E0F7F6;
+    --teal-mid: #A8E6E3;
+    --navy: #1A3A5C;
+    --navy-light: #E8EEF4;
+    --accent: #00D4C8;
+    --text-dark: #1C2B3A;
+    --text-mid: #4A5568;
+    --text-light: #8A97A6;
+    --border: #D1E0E8;
+    --bg: #F4F8FB;
+    --white: #FFFFFF;
+    --section-bg: #FAFCFE;
+    --success: #10B981;
+    --shadow: 0 2px 12px rgba(29,189,179,0.08);
+    --shadow-hover: 0 6px 24px rgba(29,189,179,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--white);
+    border-bottom: 3px solid var(--teal);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+  }
+  .logo-area {
+    display: flex;
+    align-items: center;
+    width:auto ;
+    height: 55px;
+    object-fit: contain;
+    gap: 5px;
+  }
+  .logo img{
+    max-width: 140px;
+    height: auto;
+  }
+  .logo-dots {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    padding: 2px;
+  }
+  .dot {
+    border-radius: 50%;
+    background: var(--teal);
+    opacity: 0;
+  }
+  /* D shape */
+  .dot.on { opacity: 1; }
+  .dot.dim { opacity: 0.35; background: var(--teal); }
+  .logo-text { line-height: 1.1; }
+  .logo-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    letter-spacing: -0.3px;
+  }
+  .logo-name span { color: var(--teal); }
+  .logo-sub { font-size: 10px; color: var(--text-light); font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
+  .header-badge {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--teal-mid);
+  }
+
+  /* ── HERO BANNER ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #1A5472 60%, #0F8F86 100%);
+    color: white;
+    padding: 52px 32px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: rgba(29,189,179,0.15);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .hero-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 2; }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero-line {
+    width: 60px; height: 3px;
+    background: var(--teal);
+    margin: 0 auto 18px;
+    border-radius: 2px;
+  }
+  .hero p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.78);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    position: sticky;
+    top: 79px;
+    z-index: 90;
+  }
+  .progress-inner { max-width: 900px; margin: 0 auto; }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .step-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+  .step-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text-light);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid var(--border);
+  }
+  .step-circle.active {
+    background: var(--teal);
+    color: white;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(29,189,179,0.18);
+  }
+  .step-circle.done {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    border-color: var(--teal);
+  }
+  .step-label {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  .step-label.active { color: var(--teal-dark); font-weight: 600; }
+  .step-connector {
+    flex: 1;
+    height: 1.5px;
+    background: var(--border);
+    margin: 0 8px;
+    min-width: 16px;
+    transition: background 0.3s;
+  }
+  .step-connector.done { background: var(--teal); }
+
+  /* ── MAIN WRAPPER ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 36px 32px 80px; }
+
+  /* ── SECTIONS ── */
+  .form-page { display: none; }
+  .form-page.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--teal-light);
+  }
+  .section-num {
+    width: 46px; height: 46px;
+    background: var(--teal);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(29,189,179,0.3);
+  }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--navy); margin-bottom: 4px; }
+  .section-desc { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+
+  .sub-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+  }
+  .sub-section:hover { box-shadow: var(--shadow-hover); }
+  .sub-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--teal-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 16px;
+    background: var(--teal);
+    border-radius: 2px;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field-group { margin-bottom: 18px; }
+  .field-group:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .required { color: var(--teal); margin-left: 3px; }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: var(--section-bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(29,189,179,0.12);
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* ── TABLE ROWS ── */
+  .table-rows { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+  .table-rows thead th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 8px 6px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  .table-rows tbody tr td {
+    padding: 2px 6px;
+  }
+  .table-rows input, .table-rows select {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+  .add-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--teal-dark);
+    cursor: pointer;
+    border: 1.5px dashed var(--teal-mid);
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: var(--teal-light);
+    transition: all 0.2s;
+  }
+  .add-row-btn:hover { background: var(--teal-mid); border-color: var(--teal); }
+
+  /* ── RADIO / CHECKBOX ── */
+  .radio-group, .check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .radio-pill, .check-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    background: var(--section-bg);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .radio-pill input, .check-pill input { display: none; }
+  .radio-pill:hover, .check-pill:hover { border-color: var(--teal); color: var(--teal-dark); }
+  .radio-pill.selected, .check-pill.selected {
+    background: var(--teal-light);
+    border-color: var(--teal);
+    color: var(--teal-dark);
+    font-weight: 600;
+  }
+
+  /* ── PRIORITY CARDS ── */
+  .priority-grid { display: flex; flex-direction: column; gap: 10px; }
+  .priority-row {
+    display: grid;
+    grid-template-columns: 36px 1fr 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .priority-badge {
+    width: 36px; height: 36px;
+    background: var(--navy);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .priority-badge.p1 { background: var(--teal); }
+  .priority-badge.p2 { background: var(--teal-dark); }
+  .priority-badge.p3 { background: var(--navy); }
+  .priority-badge.p4 { background: #4A6FA5; }
+  .priority-badge.p5 { background: var(--text-light); }
+
+  /* ── NAVIGATION ── */
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-prev {
+    background: var(--white);
+    color: var(--text-mid);
+    border: 1.5px solid var(--border);
+  }
+  .btn-prev:hover { background: var(--bg); border-color: var(--text-mid); }
+  .btn-next {
+    background: var(--teal);
+    color: white;
+    box-shadow: 0 4px 14px rgba(29,189,179,0.35);
+  }
+  .btn-next:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(29,189,179,0.4); }
+  .btn-submit {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 14px rgba(26,58,92,0.25);
+  }
+  .btn-submit:hover { background: #0F2740; transform: translateY(-1px); }
+
+  .page-info {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 32px;
+    animation: fadeIn 0.5s ease;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 30px rgba(29,189,179,0.3);
+  }
+  .success-icon svg { width: 36px; height: 36px; }
+  .success-title { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--navy); margin-bottom: 12px; }
+  .success-msg { font-size: 15px; color: var(--text-mid); line-height: 1.7; max-width: 460px; margin: 0 auto 32px; }
+  .btn-print {
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    border: 1.5px solid var(--teal-mid);
+  }
+  .btn-print:hover { background: var(--teal-mid); }
+
+  /* ── FOOTER ── */
+  .form-footer {
+    text-align: center;
+    padding: 24px 32px;
+    background: var(--navy);
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    margin-top: 0;
+  }
+  .form-footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── HINT TEXT ── */
+  .hint { font-size: 12px; color: var(--text-light); margin-top: 5px; font-style: italic; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .main { padding: 24px 16px 60px; }
+    .header-inner { padding: 14px 16px; }
+    .hero { padding: 40px 20px 32px; }
+    .hero h1 { font-size: 22px; }
+    .progress-wrap { padding: 12px 16px; }
+    .sub-section { padding: 18px 16px; }
+    .priority-row { grid-template-columns: 36px 1fr; }
+  }
+
+  .email-status { display:none; margin-top:12px; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:500; align-items:center; gap:10px; }
+  .email-status.sending { display:flex; background:var(--navy-light); color:var(--navy); border:1px solid #B0C8E0; }
+  .email-status.ok { display:flex; background:#E6FAF4; color:#0A6640; border:1px solid #6EDDB0; }
+  .email-status.err { display:flex; background:#FEF0F0; color:#C0392B; border:1px solid #F5A9A9; }
+  .spinner { width:16px; height:16px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; animation:spin 0.7s linear infinite; flex-shrink:0; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  #loadingOverlay { display:none; position:fixed; inset:0; z-index:9999; background:rgba(26,58,92,0.6); align-items:center; justify-content:center; flex-direction:column; }
+  #loadingOverlay.active { display:flex; }
+  .loading-card { background:white; border-radius:16px; padding:40px 52px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.25); }
+  .loading-spinner { width:48px; height:48px; border:4px solid var(--teal-light); border-top-color:var(--teal); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 18px; }
+  .loading-title { font-family:'Playfair Display',serif; font-size:18px; color:var(--navy); margin-bottom:6px; }
+  .loading-sub { font-size:13px; color:var(--text-light); }
+  @media print {
+    .header { position: static; }
+    .progress-wrap { display: none; }
+    .nav-bar { display: none; }
+    .form-page { display: block !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-area">
+
+      <div class="logo-text">
+        <div class="logo">
+            <img src="./pmbrePlan de travail 1.png" alt="" srcset="">
+       </div>
+      </div>
+    </div>
+    <div class="header-badge">Recueil des Besoins</div>
+  </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-steps" id="progressSteps">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="heroSection">
+  <div class="hero-inner">
+    <h1>Formulaire de Recueil des Besoins</h1>
+    <div class="hero-line"></div>
+    <p>Dans le cadre du projet d'amélioration et d'automatisation des processus internes de DigiPlus Consulting, ce formulaire permet d'identifier vos besoins, difficultés et pistes d'amélioration.</p>
+  </div>
+</div>
+
+<!-- MAIN FORM -->
+<main class="main">
+
+  <!-- ══ PAGE 1 : INFORMATIONS GÉNÉRALES ══ -->
+  <div class="form-page active" id="page1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">Informations Générales</div>
+        <div class="section-desc">Identification du département et du répondant</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Identification du département</div>
+      <div class="two-col">
+        <div class="field-group">
+          <label>Nom du département <span class="required">*</span></label>
+          <input type="text" placeholder="Ex : Comptabilité, Ressources Humaines…">
+        </div>
+        <div class="field-group">
+          <label>Nombre de personnes <span class="required">*</span></label>
+          <input type="number" placeholder="Ex : 8" min="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Référent du département</div>
+      <div class="two-col">
+        <div class="field-group">
+          <label>Nom du responsable / référent <span class="required">*</span></label>
+          <input type="text" placeholder="Prénom Nom">
+        </div>
+        <div class="field-group">
+          <label>Fonction / Poste <span class="required">*</span></label>
+          <input type="text" placeholder="Ex : Directeur, Chef de service…">
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field-group">
+          <label>Adresse e-mail professionnelle</label>
+          <input type="email" placeholder="exemple@digiplus.com">
+        </div>
+        <div class="field-group">
+          <label>Date de remplissage <span class="required">*</span></label>
+          <input type="date" id="dateField">
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Mission principale du département</div>
+      <div class="field-group">
+        <label>Décrivez brièvement le rôle de votre département dans l'entreprise</label>
+        <textarea placeholder="Ex : Notre département gère la comptabilité générale, le suivi des paiements fournisseurs et clients, et produit les bilans financiers mensuels…" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <span class="page-info">Page 1 sur 6</span>
+      <button class="btn btn-next" onclick="goTo(2)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2 : ACTIVITÉS ET PROCESSUS ══ -->
+  <div class="form-page" id="page2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div>
+        <div class="section-title">Activités & Processus Actuels</div>
+        <div class="section-desc">Comment travaillez-vous au quotidien ?</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Activités principales réalisées</div>
+      <p class="hint" style="margin-bottom:12px;">Listez les principales activités de votre département (quotidiennes, hebdomadaires, mensuelles).</p>
+      <table class="table-rows" id="activitiesTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Activité</th>
+            <th style="width:25%">Fréquence</th>
+            <th style="width:25%">Responsable</th>
+            <th style="width:15%">Outils</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Nom de l'activité"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+                <option>Ponctuelle</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="Personne/équipe"></td>
+            <td><input type="text" placeholder="Outil"></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Nom de l'activité"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+                <option>Ponctuelle</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="Personne/équipe"></td>
+            <td><input type="text" placeholder="Outil"></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Nom de l'activité"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+                <option>Ponctuelle</option>
+              </select>
+            </td>
+            <td><input type="text" placeholder="Personne/équipe"></td>
+            <td><input type="text" placeholder="Outil"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('activitiesTable', 4)">+ Ajouter une activité</div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Description du processus de travail</div>
+      <div class="field-group">
+        <label>Décrivez les étapes principales de votre flux de travail</label>
+        <textarea placeholder="Ex : Réception de la demande → Vérification → Traitement → Validation hiérarchique → Livraison → Archivage…" rows="4"></textarea>
+        <p class="hint">Séparez les étapes par une flèche (→) ou décrivez-les sous forme de liste numérotée.</p>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Outils utilisés actuellement</div>
+      <table class="table-rows" id="toolsTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Outil / Logiciel</th>
+            <th style="width:35%">Usage principal</th>
+            <th style="width:30%">Niveau de satisfaction</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Ex : Excel, SAP…"></td>
+            <td><input type="text" placeholder="Usage principal"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>😊 Bon</option>
+                <option>😐 Moyen</option>
+                <option>😞 Faible</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Ex : Word, Teams…"></td>
+            <td><input type="text" placeholder="Usage principal"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>😊 Bon</option>
+                <option>😐 Moyen</option>
+                <option>😞 Faible</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('toolsTable', 3)">+ Ajouter un outil</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="goTo(1)">← Précédent</button>
+      <span class="page-info">Page 2 sur 6</span>
+      <button class="btn btn-next" onclick="goTo(3)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 3 : DIFFICULTÉS ══ -->
+  <div class="form-page" id="page3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div>
+        <div class="section-title">Difficultés Rencontrées</div>
+        <div class="section-desc">Points de blocage, tâches chronophages et sources d'erreurs</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Principales difficultés du département</div>
+      <table class="table-rows" id="diffsTable">
+        <thead>
+          <tr>
+            <th style="width:45%">Difficulté rencontrée</th>
+            <th style="width:25%">Impact sur le travail</th>
+            <th style="width:30%">Fréquence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Décrivez la difficulté"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Fort</option>
+                <option>🟠 Moyen</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Très fréquent</option>
+                <option>Régulier</option>
+                <option>Rare</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Décrivez la difficulté"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Fort</option>
+                <option>🟠 Moyen</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Très fréquent</option>
+                <option>Régulier</option>
+                <option>Rare</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('diffsTable', 3)">+ Ajouter une difficulté</div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Tâches chronophages</div>
+      <table class="table-rows" id="timeTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Tâche</th>
+            <th style="width:25%">Temps estimé</th>
+            <th style="width:40%">Pourquoi est-ce long ?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Nom de la tâche"></td>
+            <td><input type="text" placeholder="Ex : 2h/jour"></td>
+            <td><input type="text" placeholder="Raison principale"></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Nom de la tâche"></td>
+            <td><input type="text" placeholder="Ex : 1h/semaine"></td>
+            <td><input type="text" placeholder="Raison principale"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('timeTable', 3)">+ Ajouter une tâche</div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Tâches répétitives ou manuelles</div>
+      <table class="table-rows" id="repeatTable">
+        <thead>
+          <tr>
+            <th style="width:40%">Tâche répétitive</th>
+            <th style="width:25%">Fréquence</th>
+            <th style="width:35%">Peut-elle être automatisée ?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Décrivez la tâche"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+              </select>
+            </td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Oui, certainement</option>
+                <option>À vérifier</option>
+                <option>Non</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Décrivez la tâche"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+              </select>
+            </td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Oui, certainement</option>
+                <option>À vérifier</option>
+                <option>Non</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('repeatTable', 3)">+ Ajouter une tâche</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="goTo(2)">← Précédent</button>
+      <span class="page-info">Page 3 sur 6</span>
+      <button class="btn btn-next" onclick="goTo(4)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4 : BESOINS & REPORTING ══ -->
+  <div class="form-page" id="page4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div>
+        <div class="section-title">Besoins & Reporting</div>
+        <div class="section-desc">Ce dont vous avez besoin pour mieux travailler</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Besoins généraux du département</div>
+      <div class="field-group">
+        <label>De quoi avez-vous besoin pour mieux travailler ?</label>
+        <textarea placeholder="Ex : Un outil de suivi des tâches partagé, un tableau de bord des performances, une meilleure coordination avec les autres équipes…" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Informations à mieux suivre</div>
+      <table class="table-rows" id="infoTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Information à suivre</th>
+            <th style="width:40%">Pourquoi est-ce important ?</th>
+            <th style="width:25%">Priorité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Ex : Paiements clients"></td>
+            <td><input type="text" placeholder="Justification"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Élevée</option>
+                <option>🟠 Moyenne</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Ex : Avancement des projets"></td>
+            <td><input type="text" placeholder="Justification"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Élevée</option>
+                <option>🟠 Moyenne</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('infoTable', 3)">+ Ajouter une information</div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Rapports et tableaux de bord souhaités</div>
+      <table class="table-rows" id="reportsTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Rapport / tableau de bord</th>
+            <th style="width:35%">Utilité</th>
+            <th style="width:30%">Fréquence souhaitée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Ex : Suivi des ventes"></td>
+            <td><input type="text" placeholder="À quoi ça sert ?"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+                <option>À la demande</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Ex : Tableau de bord RH"></td>
+            <td><input type="text" placeholder="À quoi ça sert ?"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>Quotidienne</option>
+                <option>Hebdomadaire</option>
+                <option>Mensuelle</option>
+                <option>À la demande</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('reportsTable', 3)">+ Ajouter un rapport</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="goTo(3)">← Précédent</button>
+      <span class="page-info">Page 4 sur 6</span>
+      <button class="btn btn-next" onclick="goTo(5)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 5 : COLLABORATION & AUTOMATISATION ══ -->
+  <div class="form-page" id="page5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div>
+        <div class="section-title">Collaboration & Automatisation</div>
+        <div class="section-desc">Échanges entre départements et pistes d'automatisation</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Collaboration inter-départements</div>
+      <table class="table-rows" id="collabTable">
+        <thead>
+          <tr>
+            <th style="width:30%">Département partenaire</th>
+            <th style="width:35%">Type de collaboration</th>
+            <th style="width:35%">Difficultés rencontrées</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Ex : Finances"></td>
+            <td><input type="text" placeholder="Ex : Validation des factures"></td>
+            <td><input type="text" placeholder="Ex : Délais de réponse longs"></td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Ex : Direction"></td>
+            <td><input type="text" placeholder="Ex : Reporting mensuel"></td>
+            <td><input type="text" placeholder="Difficultés rencontrées"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('collabTable', 3)">+ Ajouter un département</div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Problèmes de communication</div>
+      <div class="field-group">
+        <label>Quels problèmes de communication rencontrez-vous ?</label>
+        <textarea placeholder="Ex : Informations transmises trop tardivement, mauvaise coordination lors des validations, absence de traçabilité des échanges…" rows="3"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Quels échanges devraient être mieux organisés ou automatisés ?</label>
+        <textarea placeholder="Ex : Notifications automatiques lors d'une validation, rappels de relance clients, partage automatique de documents entre équipes…" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Actions à automatiser</div>
+      <table class="table-rows" id="autoTable">
+        <thead>
+          <tr>
+            <th style="width:35%">Action à automatiser</th>
+            <th style="width:35%">Résultat attendu</th>
+            <th style="width:30%">Priorité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" placeholder="Ex : Envoi de relances"></td>
+            <td><input type="text" placeholder="Ex : Réduire les retards de paiement"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Élevée</option>
+                <option>🟠 Moyenne</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="text" placeholder="Ex : Génération de rapports"></td>
+            <td><input type="text" placeholder="Ex : Gagner 3h/semaine"></td>
+            <td>
+              <select>
+                <option value="">— Choisir —</option>
+                <option>🔴 Élevée</option>
+                <option>🟠 Moyenne</option>
+                <option>🟢 Faible</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="add-row-btn" onclick="addRow('autoTable', 3)">+ Ajouter une action</div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="goTo(4)">← Précédent</button>
+      <span class="page-info">Page 5 sur 6</span>
+      <button class="btn btn-next" onclick="goTo(6)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 6 : PRIORISATION & VALIDATION ══ -->
+  <div class="form-page" id="page6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div>
+        <div class="section-title">Priorisation & Validation</div>
+        <div class="section-desc">Classement des besoins et signature du répondant</div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Classement des besoins les plus urgents</div>
+      <p class="hint" style="margin-bottom: 14px;">Indiquez vos 5 besoins prioritaires par ordre d'importance, avec l'impact attendu.</p>
+      <div class="priority-grid">
+        <div class="priority-row">
+          <div class="priority-badge p1">1</div>
+          <input type="text" placeholder="Besoin le plus urgent">
+          <input type="text" placeholder="Impact attendu">
+        </div>
+        <div class="priority-row">
+          <div class="priority-badge p2">2</div>
+          <input type="text" placeholder="Deuxième priorité">
+          <input type="text" placeholder="Impact attendu">
+        </div>
+        <div class="priority-row">
+          <div class="priority-badge p3">3</div>
+          <input type="text" placeholder="Troisième priorité">
+          <input type="text" placeholder="Impact attendu">
+        </div>
+        <div class="priority-row">
+          <div class="priority-badge p4">4</div>
+          <input type="text" placeholder="Quatrième priorité">
+          <input type="text" placeholder="Impact attendu">
+        </div>
+        <div class="priority-row">
+          <div class="priority-badge p5">5</div>
+          <input type="text" placeholder="Cinquième priorité">
+          <input type="text" placeholder="Impact attendu">
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Données et sécurité</div>
+      <div class="field-group">
+        <label>Quelles données votre département manipule-t-il ?</label>
+        <div class="check-group" id="dataTypes">
+          <label class="check-pill"><input type="checkbox">Données personnelles</label>
+          <label class="check-pill"><input type="checkbox">Données financières</label>
+          <label class="check-pill"><input type="checkbox">Données commerciales</label>
+          <label class="check-pill"><input type="checkbox">Documents internes</label>
+          <label class="check-pill"><input type="checkbox">Données RH</label>
+          <label class="check-pill"><input type="checkbox">Données techniques</label>
+          <label class="check-pill"><input type="checkbox">Données clients</label>
+          <label class="check-pill"><input type="checkbox">Autres</label>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:16px;">
+        <label>Problèmes liés à la gestion des données</label>
+        <textarea placeholder="Ex : Doublons dans les fichiers, pertes d'informations, accès non contrôlé, données non mises à jour…" rows="3"></textarea>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Suggestions libres</div>
+      <div class="field-group">
+        <label>Propositions, idées ou recommandations pour améliorer votre département</label>
+        <textarea rows="4" placeholder="Partagez librement toute idée ou suggestion qui pourrait améliorer le fonctionnement de votre équipe…"></textarea>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Envoi du rapport par e-mail</div>
+      <div class="field-group">
+        <label>Adresse e-mail de réception du rapport PDF <span class="required">*</span></label>
+        <input type="email" id="recipientEmail" placeholder="votre.adresse@digiplus.com">
+        <p class="hint">Le rapport complet sera généré en PDF et envoyé automatiquement à cette adresse via Gmail.</p>
+      </div>
+      <div class="email-status" id="emailStatus">
+        <div class="spinner"></div>
+        <span id="emailStatusMsg">Génération et envoi du rapport en cours…</span>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-title">Validation et signature</div>
+      <div class="three-col">
+        <div class="field-group">
+          <label>Nom du répondant <span class="required">*</span></label>
+          <input type="text" placeholder="Prénom Nom">
+        </div>
+        <div class="field-group">
+          <label>Fonction</label>
+          <input type="text" placeholder="Votre poste">
+        </div>
+        <div class="field-group">
+          <label>Date de signature <span class="required">*</span></label>
+          <input type="date" id="signDate">
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:8px;">
+        <label>Engagement et confirmation</label>
+        <label class="check-pill" id="confirmPill" style="width:100%; border-radius:10px; justify-content:flex-start; gap:12px;">
+          <input type="checkbox" id="confirmCheck">
+          Je certifie que les informations fournies sont exactes et reflètent fidèlement les besoins et la réalité de mon département.
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-prev" onclick="goTo(5)">← Précédent</button>
+      <span class="page-info">Page 6 sur 6</span>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
+        <button class="btn btn-submit" onclick="submitForm()">✓ Soumettre le formulaire</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS SCREEN ══ -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">
+      <svg viewBox="0 0 36 36" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="7,18 14,26 29,10"/>
+      </svg>
+    </div>
+    <div class="success-title">Rapport envoyé avec succès !</div>
+    <div class="success-msg">Merci pour votre contribution. Le rapport PDF complet a été généré et envoyé à <strong id="successEmail"></strong>. L'équipe DigiPlus Consulting analysera vos besoins pour identifier les meilleures solutions.</div>
+    <button class="btn btn-print" onclick="window.print()" style="margin: 0 auto; display:inline-flex;">🖨 Imprimer une copie</button>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="form-footer">
+  <strong>DigiPlus Consulting</strong> — Formulaire de Recueil des Besoins — Confidentiel &amp; Usage Interne<br>
+  Version 1.0 · 2025 · Ce document est destiné exclusivement à un usage interne.
+</footer>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <div class="loading-title">Envoi en cours…</div>
+    <div class="loading-sub">Génération du PDF &amp; envoi par Gmail</div>
+  </div>
+</div>
+
+<script>
+  const PAGES = 6;
+  const stepLabels = ['Infos générales','Activités','Difficultés','Besoins','Collaboration','Priorisation'];
+  let currentPage = 1;
+
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('dateField').value = today;
+  document.getElementById('signDate').value = today;
+
+  // Build progress bar
+  function buildProgress() {
+    const container = document.getElementById('progressSteps');
+    container.innerHTML = '';
+    for (let i = 1; i <= PAGES; i++) {
+      const item = document.createElement('div');
+      item.className = 'step-item';
+      const circle = document.createElement('div');
+      circle.className = 'step-circle' + (i === currentPage ? ' active' : i < currentPage ? ' done' : '');
+      circle.textContent = i < currentPage ? '✓' : i;
+      circle.onclick = () => { if (i < currentPage) goTo(i); };
+      const label = document.createElement('span');
+      label.className = 'step-label' + (i === currentPage ? ' active' : '');
+      label.textContent = stepLabels[i-1];
+      item.appendChild(circle);
+      item.appendChild(label);
+      container.appendChild(item);
+      if (i < PAGES) {
+        const conn = document.createElement('div');
+        conn.className = 'step-connector' + (i < currentPage ? ' done' : '');
+        container.appendChild(conn);
+      }
+    }
+  }
+
+  function goTo(n) {
+    document.getElementById('page' + currentPage).classList.remove('active');
+    currentPage = n;
+    document.getElementById('page' + currentPage).classList.add('active');
+    buildProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ══ DATA COLLECTION ══ */
+  function collectFormData() {
+    const result = { sections: [] };
+    document.querySelectorAll('.form-page').forEach(page => {
+      page.querySelectorAll('.sub-section').forEach(sec => {
+        const titleEl = sec.querySelector('.sub-title');
+        if (!titleEl) return;
+        const title = titleEl.textContent.replace(/^\s*/, '').trim();
+        const fields = [];
+        // Individual fields
+        sec.querySelectorAll('.field-group').forEach(fg => {
+          const lbl = fg.querySelector('label:not(.check-pill):not(.radio-pill)');
+          const inp = fg.querySelector('input:not([type=checkbox]):not([type=radio]), textarea');
+          const sel = fg.querySelector('select');
+          if (inp && lbl) {
+            const label = lbl.textContent.replace('*','').replace('↗','').trim();
+            if (inp.value) fields.push({ label, value: inp.value });
+          } else if (sel && lbl) {
+            const label = lbl.textContent.replace('*','').trim();
+            if (sel.value) fields.push({ label, value: sel.value });
+          }
+        });
+        // Checked pills
+        const pills = [...sec.querySelectorAll('.check-pill.selected, .radio-pill.selected')].map(p => p.textContent.trim()).filter(Boolean);
+        if (pills.length) fields.push({ label: 'Sélections', value: pills.join(', ') });
+        // Priority rows
+        sec.querySelectorAll('.priority-row').forEach((row, i) => {
+          const inputs = row.querySelectorAll('input');
+          if (inputs[0]?.value) fields.push({ label: `Priorité ${i+1}`, value: `${inputs[0].value}${inputs[1]?.value ? ' → Impact : ' + inputs[1].value : ''}` });
+        });
+        // Tables
+        const tables = [];
+        sec.querySelectorAll('table').forEach(tbl => {
+          const headers = [...tbl.querySelectorAll('thead th')].map(th => th.textContent.trim());
+          const rows = [];
+          tbl.querySelectorAll('tbody tr').forEach(tr => {
+            const row = {};
+            tr.querySelectorAll('td').forEach((td, i) => {
+              const el = td.querySelector('input, select, textarea');
+              if (el?.value) row[headers[i] || `Col${i+1}`] = el.value;
+            });
+            if (Object.values(row).some(v => v)) rows.push(row);
+          });
+          if (rows.length) tables.push({ headers, rows });
+        });
+        if (fields.length || tables.length) result.sections.push({ title, fields, tables });
+      });
+    });
+    return result;
+  }
+
+  /* ══ PDF GENERATION ══ */
+  function generatePDF(data) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const TEAL = [29, 189, 179];
+    const NAVY = [26, 58, 92];
+    const W = 210; const MARGIN = 16;
+    let y = 0;
+
+    function checkPage(needed) {
+      if (y + needed > 270) { doc.addPage(); y = 20; }
+    }
+
+    // Header band
+    doc.setFillColor(...NAVY);
+    doc.rect(0, 0, W, 32, 'F');
+    doc.setFillColor(...TEAL);
+    doc.rect(0, 30, W, 3, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+    doc.text('DigiPlus Consulting', MARGIN, 13);
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    doc.setTextColor(180, 220, 218);
+    doc.text('Rapport de Recueil des Besoins — Confidentiel', MARGIN, 21);
+    doc.setTextColor(150, 200, 198);
+    doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}`, W - MARGIN, 21, { align: 'right' });
+    y = 42;
+
+    data.sections.forEach(section => {
+      if (section.title.toLowerCase().includes('envoi') || section.title.toLowerCase().includes('validation')) return;
+      checkPage(18);
+      // Section title bar
+      doc.setFillColor(...TEAL);
+      doc.rect(MARGIN, y - 4, W - MARGIN * 2, 10, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+      doc.text(section.title.toUpperCase(), MARGIN + 4, y + 2.5);
+      y += 12;
+
+      // Fields
+      section.fields.forEach(f => {
+        checkPage(8);
+        doc.setFontSize(8.5); doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...NAVY);
+        doc.text(`${f.label} :`, MARGIN + 2, y);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(60, 80, 100);
+        const lines = doc.splitTextToSize(f.value, W - MARGIN * 2 - 70);
+        doc.text(lines, MARGIN + 72, y);
+        y += Math.max(7, lines.length * 5);
+        checkPage(0);
+      });
+
+      // Tables
+      section.tables.forEach(tbl => {
+        checkPage(20);
+        doc.autoTable({
+          startY: y,
+          head: [tbl.headers],
+          body: tbl.rows.map(r => tbl.headers.map(h => r[h] || '')),
+          margin: { left: MARGIN, right: MARGIN },
+          styles: { fontSize: 8, cellPadding: 2.5, textColor: [40, 60, 80] },
+          headStyles: { fillColor: NAVY, textColor: [255,255,255], fontStyle: 'bold', fontSize: 8 },
+          alternateRowStyles: { fillColor: [240, 248, 252] },
+          columnStyles: { 0: { fontStyle: 'bold' } },
+        });
+        y = doc.lastAutoTable.finalY + 6;
+      });
+      y += 4;
+    });
+
+    // Footer on each page
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFillColor(245, 248, 251);
+      doc.rect(0, 283, W, 14, 'F');
+      doc.setDrawColor(...TEAL); doc.setLineWidth(0.5);
+      doc.line(0, 283, W, 283);
+      doc.setFontSize(7.5); doc.setTextColor(130, 150, 170); doc.setFont('helvetica', 'normal');
+      doc.text('DigiPlus Consulting — Document confidentiel à usage interne', MARGIN, 290);
+      doc.text(`Page ${i} / ${totalPages}`, W - MARGIN, 290, { align: 'right' });
+    }
+
+    return doc.output('datauristring').split(',')[1];
+  }
+
+  /* ══ ENVOI VIA API VERCEL (/api/send) + NODEMAILER SMTP GMAIL ══ */
+  async function sendEmailWithPDF(recipientEmail, formData, pdfBase64) {
+    const dept = document.querySelector('#page1 input')?.value || 'Département';
+    const date = new Date().toLocaleDateString('fr-FR');
+
+    // Récupérer le nom du répondant depuis la section Validation
+    const signSection = document.getElementById('signDate')?.closest('.sub-section');
+    const respondant = signSection?.querySelector('input[type="text"]')?.value || '';
+
+    // Construire un résumé HTML des données du formulaire
+    const sectionsHtml = formData.sections
+      .filter(s => !s.title.toLowerCase().includes('envoi') && !s.title.toLowerCase().includes('validation'))
+      .map(s => {
+        const fieldsHtml = s.fields.map(f =>
+          `<tr>
+            <td style="padding:6px 10px;font-weight:600;color:#1A3A5C;width:40%;border-bottom:1px solid #E8EEF4">${f.label}</td>
+            <td style="padding:6px 10px;color:#4A5568;border-bottom:1px solid #E8EEF4">${f.value}</td>
+          </tr>`
+        ).join('');
+
+        const tablesHtml = s.tables.map(t => {
+          const headers = t.headers.map(h => `<th style="background:#1A3A5C;color:white;padding:7px 10px;font-size:12px;text-align:left">${h}</th>`).join('');
+          const rows = t.rows.map(r =>
+            `<tr>${t.headers.map(h => `<td style="padding:6px 10px;border-bottom:1px solid #E8EEF4;font-size:13px;color:#4A5568">${r[h] || ''}</td>`).join('')}</tr>`
+          ).join('');
+          return `<table style="width:100%;border-collapse:collapse;margin-top:10px"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+        }).join('');
+
+        return `
+          <div style="margin-bottom:24px">
+            <div style="background:#1DBDB3;color:white;padding:8px 14px;border-radius:6px 6px 0 0;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">${s.title}</div>
+            <div style="border:1px solid #D1E0E8;border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
+              ${fieldsHtml ? `<table style="width:100%;border-collapse:collapse">${fieldsHtml}</table>` : ''}
+              ${tablesHtml}
+            </div>
+          </div>`;
+      }).join('');
+
+    const summaryHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;background:#F4F8FB;padding:20px">
+        <!-- En-tête -->
+        <div style="background:#1A3A5C;padding:28px 32px;border-radius:10px 10px 0 0">
+          <h1 style="color:white;margin:0;font-size:24px">Digi<span style="color:#1DBDB3">Plus</span> Consulting</h1>
+          <p style="color:rgba(255,255,255,0.65);margin:8px 0 0;font-size:13px;letter-spacing:1px;text-transform:uppercase">Rapport de Recueil des Besoins</p>
+        </div>
+        <div style="background:#1DBDB3;height:4px;border-radius:0"></div>
+        <!-- Corps -->
+        <div style="background:white;padding:32px;border:1px solid #D1E0E8;border-top:none">
+          <p style="color:#4A5568;margin:0 0 8px">Bonjour,</p>
+          <p style="color:#4A5568;margin:0 0 20px">
+            Veuillez trouver ci-joint le rapport complet de recueil des besoins du département
+            <strong style="color:#1A3A5C">${dept}</strong>, soumis le <strong style="color:#1A3A5C">${date}</strong>${respondant ? ' par <strong style="color:#1A3A5C">' + respondant + '</strong>' : ''}.
+          </p>
+          <!-- Bandeau PDF -->
+          <div style="background:#E0F7F6;border-left:4px solid #1DBDB3;padding:14px 20px;border-radius:0 8px 8px 0;margin-bottom:28px">
+            <p style="margin:0;font-weight:700;color:#1A3A5C;font-size:14px">📄 Pièce jointe</p>
+            <p style="margin:5px 0 0;color:#4A5568;font-size:13px">Le rapport PDF complet et détaillé est joint à cet e-mail.</p>
+          </div>
+          <!-- Résumé sections -->
+          <h2 style="color:#1A3A5C;font-size:16px;margin:0 0 16px;padding-bottom:10px;border-bottom:2px solid #E0F7F6">Résumé du formulaire</h2>
+          ${sectionsHtml}
+          <p style="color:#4A5568;margin:24px 0 4px">Cordialement,</p>
+          <p style="color:#1A3A5C;font-weight:700;margin:0">DigiPlus Consulting — Équipe Transformation Digitale</p>
+        </div>
+        <!-- Pied de page -->
+        <div style="background:#1A3A5C;padding:14px 32px;text-align:center;border-radius:0 0 10px 10px">
+          <p style="font-size:11px;color:rgba(255,255,255,0.5);margin:0">Document confidentiel — Usage interne uniquement — DigiPlus Consulting © 2025</p>
+        </div>
+      </div>`;
+
+    // Appel vers l'API Vercel /api/send
+    const response = await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recipientEmail, pdfBase64, dept, date, respondant, summaryHtml }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.error || `Erreur serveur (${response.status})`);
+    }
+    return true;
+  }
+
+  /* ══ UPDATED SUBMIT ══ */
+  async function submitForm() {
+    const confirm = document.getElementById('confirmCheck');
+    if (!confirm.checked) {
+      alert('Veuillez cocher la case de confirmation avant de soumettre.');
+      return;
+    }
+    const email = document.getElementById('recipientEmail')?.value?.trim();
+    if (!email || !email.includes('@')) {
+      alert('Veuillez saisir une adresse e-mail valide pour recevoir le rapport.');
+      return;
+    }
+
+    const status = document.getElementById('emailStatus');
+    const statusMsg = document.getElementById('emailStatusMsg');
+    document.getElementById('loadingOverlay').classList.add('active');
+
+    try {
+      // 1. Collect
+      statusMsg.textContent = 'Collecte des données du formulaire…';
+      const data = collectFormData();
+
+      // 2. Generate PDF
+      statusMsg.textContent = 'Génération du rapport PDF…';
+      await new Promise(r => setTimeout(r, 100));
+      const pdfBase64 = generatePDF(data);
+
+      // 3. Send
+      statusMsg.textContent = 'Envoi par Gmail en cours…';
+      await sendEmailWithPDF(email, data, pdfBase64);
+
+      // 4. Success UI
+      document.getElementById('loadingOverlay').classList.remove('active');
+      status.className = 'email-status ok';
+      status.innerHTML = `<span>✓</span><span>Rapport PDF envoyé avec succès à <strong>${email}</strong> !</span>`;
+      setTimeout(() => {
+        for (let i = 1; i <= PAGES; i++) document.getElementById('page' + i).style.display = 'none';
+        document.getElementById('heroSection').style.display = 'none';
+        document.getElementById('progressSteps').parentElement.parentElement.style.display = 'none';
+        document.getElementById('successEmail').textContent = email;
+        document.getElementById('successScreen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 1200);
+
+    } catch (err) {
+      document.getElementById('loadingOverlay').classList.remove('active');
+      status.className = 'email-status err';
+      status.innerHTML = `<span>✗</span><span>Erreur : ${err.message}. Vérifiez votre connexion Gmail et réessayez.</span>`;
+    }
+  }
+
+  function addRow(tableId, cols) {
+    const table = document.getElementById(tableId);
+    const tbody = table.querySelector('tbody');
+    const firstRow = tbody.rows[0];
+    const newRow = tbody.insertRow();
+    for (let i = 0; i < firstRow.cells.length; i++) {
+      const cell = newRow.insertCell();
+      const original = firstRow.cells[i];
+      const input = original.querySelector('input');
+      const select = original.querySelector('select');
+      if (input) {
+        const ni = document.createElement('input');
+        ni.type = input.type;
+        ni.placeholder = input.placeholder;
+        cell.appendChild(ni);
+      } else if (select) {
+        const ns = select.cloneNode(true);
+        ns.value = '';
+        cell.appendChild(ns);
+      }
+    }
+  }
+
+  // Pill selection
+  document.addEventListener('click', function(e) {
+    const pill = e.target.closest('.radio-pill');
+    if (pill) {
+      const group = pill.closest('.radio-group');
+      group.querySelectorAll('.radio-pill').forEach(p => p.classList.remove('selected'));
+      pill.classList.add('selected');
+      const input = pill.querySelector('input[type="radio"]');
+      if (input) input.checked = true;
+    }
+    const cpill = e.target.closest('.check-pill');
+    if (cpill && cpill.id !== 'confirmPill') {
+      cpill.classList.toggle('selected');
+    }
+    if (cpill && cpill.id === 'confirmPill') {
+      const cb = document.getElementById('confirmCheck');
+      cb.checked = !cb.checked;
+      cpill.classList.toggle('selected', cb.checked);
+    }
+  });
+
+  buildProgress();
+</script>
+</body>
+</html>
