@@ -732,9 +732,9 @@
             <td>
               <select>
                 <option value="">— Choisir —</option>
-                <option>😊 Bon</option>
-                <option>😐 Moyen</option>
-                <option>😞 Faible</option>
+                <option>Bon</option>
+                <option>Moyen</option>
+                <option> Faible</option>
               </select>
             </td>
           </tr>
@@ -744,9 +744,9 @@
             <td>
               <select>
                 <option value="">— Choisir —</option>
-                <option>😊 Bon</option>
-                <option>😐 Moyen</option>
-                <option>😞 Faible</option>
+                <option> Bon</option>
+                <option> Moyen</option>
+                <option>Faible</option>
               </select>
             </td>
           </tr>
@@ -1185,36 +1185,12 @@
         <textarea rows="4" placeholder="Partagez librement toute idée ou suggestion qui pourrait améliorer le fonctionnement de votre équipe…"></textarea>
       </div>
     </div>
-    <div class="sub-section">
-      <div class="sub-title">Validation et signature</div>
-      <div class="three-col">
-        <div class="field-group">
-          <label>Nom du répondant <span class="required">*</span></label>
-          <input type="text" placeholder="Prénom Nom">
-        </div>
-        <div class="field-group">
-          <label>Fonction</label>
-          <input type="text" placeholder="Votre poste">
-        </div>
-        <div class="field-group">
-          <label>Date de signature <span class="required">*</span></label>
-          <input type="date" id="signDate">
-        </div>
-      </div>
-      <div class="field-group" style="margin-top:8px;">
-        <label>Engagement et confirmation</label>
-        <label class="check-pill" id="confirmPill" style="width:100%; border-radius:10px; justify-content:flex-start; gap:12px;">
-          <input type="checkbox" id="confirmCheck">
-          Je certifie que les informations fournies sont exactes et reflètent fidèlement les besoins et la réalité de mon département.
-        </label>
-      </div>
-    </div>
 
     <div class="nav-bar">
       <button class="btn btn-prev" onclick="goTo(5)">← Précédent</button>
       <span class="page-info">Page 6 sur 6</span>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
+        <button class="btn btn-print" onclick="window.print()"> Imprimer</button>
         <button class="btn btn-submit" onclick="submitForm()">✓ Soumettre le formulaire</button>
       </div>
     </div>
@@ -1436,8 +1412,8 @@
     const date = new Date().toLocaleDateString('fr-FR');
 
     // Récupérer le nom du répondant depuis la section Validation
-    const signSection = document.getElementById('signDate')?.closest('.sub-section');
-    const respondant = signSection?.querySelector('input[type="text"]')?.value || '';
+    // const signSection = document.getElementById('signDate')?.closest('.sub-section');
+    // const respondant = signSection?.querySelector('input[type="text"]')?.value || '';
 
     // Construire un résumé HTML des données du formulaire
     const sectionsHtml = formData.sections
@@ -1516,21 +1492,6 @@
 
   /* ══ UPDATED SUBMIT ══ */
   async function submitForm() {
-    const confirm = document.getElementById('confirmCheck');
-    if (!confirm.checked) {
-      alert('Veuillez cocher la case de confirmation avant de soumettre.');
-      return;
-    }
-    const email = document.getElementById('recipientEmail')?.value?.trim();
-    if (!email || !email.includes('@')) {
-      alert('Veuillez saisir une adresse e-mail valide pour recevoir le rapport.');
-      return;
-    }
-
-    const status = document.getElementById('emailStatus');
-    const statusMsg = document.getElementById('emailStatusMsg');
-    document.getElementById('loadingOverlay').classList.add('active');
-
     try {
       // 1. Collect
       statusMsg.textContent = 'Collecte des données du formulaire…';
