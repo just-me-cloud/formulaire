@@ -1,37 +1,31 @@
 import nodemailer from 'nodemailer';
-
+ 
 export default async function handler(req, res) {
-  // Autoriser uniquement les requêtes POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Méthode non autorisée' });
   }
-
-  // Créer le transporteur SMTP Gmail
+ 
+  const { dept, date, summaryHtml } = req.body;
+ 
+  if (!summaryHtml) {
+    return res.status(400).json({ error: 'Données manquantes.' });
+  }
+ 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.GMAIL_USER,      // ex: tonmail@gmail.com
+      user: process.env.GMAIL_USER,      // ton adresse Gmail expéditeur
       pass: process.env.GMAIL_APP_PASS,  // mot de passe d'application 16 caractères
     },
   });
-
-  const nomFichier = `rapport-besoins-${(dept || 'digiplus').replace(/\s+/g, '-').toLowerCase()}-${(date || '').replace(/\//g, '-')}.pdf`;
-
+ 
   const mailOptions = {
     from: `"DigiPlus Consulting" <${process.env.GMAIL_USER}>`,
-    to: recipientEmail,
-    subject: `[DigiPlus Consulting] Rapport de Recueil des Besoins — ${dept || 'Département'} — ${date || ''}`,
-    html: summaryHtml || `<p>Veuillez trouver ci-joint le rapport de recueil des besoins du département <strong>${dept}</strong>.</p>`,
-    attachments: [
-      {
-        filename: nomFichier,
-        content: pdfBase64,
-        encoding: 'base64',
-        contentType: 'application/pdf',
-      },
-    ],
+    to: process.env.GMAIL_DEST,          // ton adresse de réception (peut être la même)
+    subject: `[DigiPlus] Nouveau formulaire — ${dept || 'Département'} — ${date || ''}`,
+    html: summaryHtml,
   };
-
+ 
   try {
     await transporter.sendMail(mailOptions);
     return res.status(200).json({ success: true });
