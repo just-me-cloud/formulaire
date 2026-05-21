@@ -1205,7 +1205,7 @@
     </div>
     <div class="success-title">Rapport envoyé avec succès !</div>
     <div class="success-msg">Merci pour votre contribution. Le rapport PDF complet a été généré et envoyé à <strong id="successEmail"></strong>. L'équipe DigiPlus Consulting analysera vos besoins pour identifier les meilleures solutions.</div>
-    <button class="btn btn-print" onclick="window.print()" style="margin: 0 auto; display:inline-flex;">🖨 Imprimer une copie</button>
+    <button class="btn btn-print" onclick="window.print()" style="margin: 0 auto; display:inline-flex;">imprimer une copie</button>
   </div>
 
 </main>
@@ -1226,15 +1226,14 @@
 </div>
 
 <script>
-  const PAGES = 6;
+   const PAGES = 6;
   const stepLabels = ['Infos générales','Activités','Difficultés','Besoins','Collaboration','Priorisation'];
   let currentPage = 1;
-
+ 
   // Set today's date
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('dateField').value = today;
-  document.getElementById('signDate').value = today;
-
+ 
   // Build progress bar
   function buildProgress() {
     const container = document.getElementById('progressSteps');
@@ -1259,7 +1258,7 @@
       }
     }
   }
-
+ 
   function goTo(n) {
     document.getElementById('page' + currentPage).classList.remove('active');
     currentPage = n;
@@ -1267,7 +1266,7 @@
     buildProgress();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
+ 
   /* ══ DATA COLLECTION ══ */
   function collectFormData() {
     const result = { sections: [] };
@@ -1318,7 +1317,7 @@
     });
     return result;
   }
-
+ 
   /* ══ PDF GENERATION ══ */
   function generatePDF(data) {
     const { jsPDF } = window.jspdf;
@@ -1327,11 +1326,11 @@
     const NAVY = [26, 58, 92];
     const W = 210; const MARGIN = 16;
     let y = 0;
-
+ 
     function checkPage(needed) {
       if (y + needed > 270) { doc.addPage(); y = 20; }
     }
-
+ 
     // Header band
     doc.setFillColor(...NAVY);
     doc.rect(0, 0, W, 32, 'F');
@@ -1346,7 +1345,7 @@
     doc.setTextColor(150, 200, 198);
     doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}`, W - MARGIN, 21, { align: 'right' });
     y = 42;
-
+ 
     data.sections.forEach(section => {
       if (section.title.toLowerCase().includes('envoi') || section.title.toLowerCase().includes('validation')) return;
       checkPage(18);
@@ -1357,7 +1356,7 @@
       doc.setFontSize(10); doc.setFont('helvetica', 'bold');
       doc.text(section.title.toUpperCase(), MARGIN + 4, y + 2.5);
       y += 12;
-
+ 
       // Fields
       section.fields.forEach(f => {
         checkPage(8);
@@ -1371,7 +1370,7 @@
         y += Math.max(7, lines.length * 5);
         checkPage(0);
       });
-
+ 
       // Tables
       section.tables.forEach(tbl => {
         checkPage(20);
@@ -1389,7 +1388,7 @@
       });
       y += 4;
     });
-
+ 
     // Footer on each page
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
@@ -1402,131 +1401,128 @@
       doc.text('DigiPlus Consulting — Document confidentiel à usage interne', MARGIN, 290);
       doc.text(`Page ${i} / ${totalPages}`, W - MARGIN, 290, { align: 'right' });
     }
-
+ 
     return doc.output('datauristring').split(',')[1];
   }
-
-  /* ══ ENVOI VIA API VERCEL (/api/send) + NODEMAILER SMTP GMAIL ══ */
-  async function sendEmailWithPDF(recipientEmail, formData, pdfBase64) {
+ 
+  /* ══ ENVOI VIA /api/send (NODEMAILER SMTP GMAIL) ══ */
+  async function sendFormData(formData) {
     const dept = document.querySelector('#page1 input')?.value || 'Département';
     const date = new Date().toLocaleDateString('fr-FR');
-
-    // Récupérer le nom du répondant depuis la section Validation
-    // const signSection = document.getElementById('signDate')?.closest('.sub-section');
-    // const respondant = signSection?.querySelector('input[type="text"]')?.value || '';
-
-    // Construire un résumé HTML des données du formulaire
-    const sectionsHtml = formData.sections
-      .filter(s => !s.title.toLowerCase().includes('envoi') && !s.title.toLowerCase().includes('validation'))
-      .map(s => {
-        const fieldsHtml = s.fields.map(f =>
-          `<tr>
-            <td style="padding:6px 10px;font-weight:600;color:#1A3A5C;width:40%;border-bottom:1px solid #E8EEF4">${f.label}</td>
-            <td style="padding:6px 10px;color:#4A5568;border-bottom:1px solid #E8EEF4">${f.value}</td>
+ 
+    // Construire le tableau HTML des données
+    const sectionsHtml = formData.sections.map(s => {
+      const fieldsRows = s.fields.map(f =>
+        `<tr>
+          <td style="padding:8px 12px;font-weight:600;color:#1A3A5C;background:#F4F8FB;width:35%;border-bottom:1px solid #E8EEF4">${f.label}</td>
+          <td style="padding:8px 12px;color:#4A5568;border-bottom:1px solid #E8EEF4">${f.value}</td>
+        </tr>`
+      ).join('');
+ 
+      const tablesHtml = s.tables.map(t => {
+        const headers = t.headers.map(h =>
+          `<th style="background:#1A3A5C;color:white;padding:8px 12px;text-align:left;font-size:12px">${h}</th>`
+        ).join('');
+        const rows = t.rows.map((r, idx) =>
+          `<tr style="background:${idx % 2 === 0 ? '#F9FBFD' : '#FFFFFF'}">
+            ${t.headers.map(h => `<td style="padding:7px 12px;border-bottom:1px solid #E8EEF4;color:#4A5568;font-size:13px">${r[h] || '—'}</td>`).join('')}
           </tr>`
         ).join('');
-
-        const tablesHtml = s.tables.map(t => {
-          const headers = t.headers.map(h => `<th style="background:#1A3A5C;color:white;padding:7px 10px;font-size:12px;text-align:left">${h}</th>`).join('');
-          const rows = t.rows.map(r =>
-            `<tr>${t.headers.map(h => `<td style="padding:6px 10px;border-bottom:1px solid #E8EEF4;font-size:13px;color:#4A5568">${r[h] || ''}</td>`).join('')}</tr>`
-          ).join('');
-          return `<table style="width:100%;border-collapse:collapse;margin-top:10px"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
-        }).join('');
-
-        return `
-          <div style="margin-bottom:24px">
-            <div style="background:#1DBDB3;color:white;padding:8px 14px;border-radius:6px 6px 0 0;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">${s.title}</div>
-            <div style="border:1px solid #D1E0E8;border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
-              ${fieldsHtml ? `<table style="width:100%;border-collapse:collapse">${fieldsHtml}</table>` : ''}
-              ${tablesHtml}
-            </div>
-          </div>`;
+        return `<table style="width:100%;border-collapse:collapse;margin-top:12px">
+          <thead><tr>${headers}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
       }).join('');
-
+ 
+      return `
+        <div style="margin-bottom:28px">
+          <div style="background:#1DBDB3;color:white;padding:9px 14px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.8px">${s.title}</div>
+          <div style="border:1px solid #D1E0E8;border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
+            ${fieldsRows ? `<table style="width:100%;border-collapse:collapse">${fieldsRows}</table>` : ''}
+            ${tablesHtml}
+            ${!fieldsRows && !tablesHtml ? '<p style="padding:12px;color:#8A97A6;font-style:italic;font-size:13px">Aucune donnée saisie</p>' : ''}
+          </div>
+        </div>`;
+    }).join('');
+ 
     const summaryHtml = `
-      <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;background:#F4F8FB;padding:20px">
-        <!-- En-tête -->
+      <div style="font-family:Arial,sans-serif;max-width:720px;margin:auto;background:#F4F8FB;padding:20px">
         <div style="background:#1A3A5C;padding:28px 32px;border-radius:10px 10px 0 0">
           <h1 style="color:white;margin:0;font-size:24px">Digi<span style="color:#1DBDB3">Plus</span> Consulting</h1>
-          <p style="color:rgba(255,255,255,0.65);margin:8px 0 0;font-size:13px;letter-spacing:1px;text-transform:uppercase">Rapport de Recueil des Besoins</p>
+          <p style="color:rgba(255,255,255,0.6);margin:8px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:1.5px">Nouveau formulaire reçu</p>
         </div>
-        <div style="background:#1DBDB3;height:4px;border-radius:0"></div>
-        <!-- Corps -->
+        <div style="background:#1DBDB3;height:4px"></div>
         <div style="background:white;padding:32px;border:1px solid #D1E0E8;border-top:none">
-          <p style="color:#4A5568;margin:0 0 8px">Bonjour,</p>
-          <p style="color:#4A5568;margin:0 0 20px">
-            Veuillez trouver ci-joint le rapport complet de recueil des besoins du département
-            <strong style="color:#1A3A5C">${dept}</strong>, soumis le <strong style="color:#1A3A5C">${date}</strong>${respondant ? ' par <strong style="color:#1A3A5C">' + respondant + '</strong>' : ''}.
+          <p style="color:#4A5568;margin:0 0 6px">Bonjour,</p>
+          <p style="color:#4A5568;margin:0 0 24px">
+            Un nouveau formulaire de recueil des besoins a été soumis par le département
+            <strong style="color:#1A3A5C">${dept}</strong> le <strong style="color:#1A3A5C">${date}</strong>.
           </p>
-          <!-- Bandeau PDF -->
-          <div style="background:#E0F7F6;border-left:4px solid #1DBDB3;padding:14px 20px;border-radius:0 8px 8px 0;margin-bottom:28px">
-            <p style="margin:0;font-weight:700;color:#1A3A5C;font-size:14px">📄 Pièce jointe</p>
-            <p style="margin:5px 0 0;color:#4A5568;font-size:13px">Le rapport PDF complet et détaillé est joint à cet e-mail.</p>
-          </div>
-          <!-- Résumé sections -->
-          <h2 style="color:#1A3A5C;font-size:16px;margin:0 0 16px;padding-bottom:10px;border-bottom:2px solid #E0F7F6">Résumé du formulaire</h2>
+          <h2 style="color:#1A3A5C;font-size:15px;margin:0 0 20px;padding-bottom:10px;border-bottom:2px solid #E0F7F6">
+            📋 Données du formulaire
+          </h2>
           ${sectionsHtml}
-          <p style="color:#4A5568;margin:24px 0 4px">Cordialement,</p>
-          <p style="color:#1A3A5C;font-weight:700;margin:0">DigiPlus Consulting — Équipe Transformation Digitale</p>
         </div>
-        <!-- Pied de page -->
         <div style="background:#1A3A5C;padding:14px 32px;text-align:center;border-radius:0 0 10px 10px">
-          <p style="font-size:11px;color:rgba(255,255,255,0.5);margin:0">Document confidentiel — Usage interne uniquement — DigiPlus Consulting © 2025</p>
+          <p style="font-size:11px;color:rgba(255,255,255,0.45);margin:0">Document confidentiel — DigiPlus Consulting © ${new Date().getFullYear()}</p>
         </div>
       </div>`;
-
-    // Appel vers l'API Vercel /api/send
+ 
     const response = await fetch('/api/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipientEmail, pdfBase64, dept, date, respondant, summaryHtml }),
+      body: JSON.stringify({ dept, date, summaryHtml }),
     });
-
+ 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(err?.error || `Erreur serveur (${response.status})`);
     }
     return true;
   }
-
-  /* ══ UPDATED SUBMIT ══ */
+ 
+  /* ══ SUBMIT ══ */
   async function submitForm() {
+    const status = document.getElementById('emailStatus');
+    const statusMsg = document.getElementById('emailStatusMsg');
+    const overlay = document.getElementById('loadingOverlay');
+ 
+    status.className = 'email-status sending';
+    overlay.classList.add('active');
+ 
     try {
-      // 1. Collect
-      statusMsg.textContent = 'Collecte des données du formulaire…';
+      statusMsg.textContent = 'Collecte des données…';
       const data = collectFormData();
-
-      // 2. Generate PDF
-      statusMsg.textContent = 'Génération du rapport PDF…';
-      await new Promise(r => setTimeout(r, 100));
-      const pdfBase64 = generatePDF(data);
-
-      // 3. Send
-      statusMsg.textContent = 'Envoi par Gmail en cours…';
-      await sendEmailWithPDF(email, data, pdfBase64);
-
-      // 4. Success UI
-      document.getElementById('loadingOverlay').classList.remove('active');
+ 
+      statusMsg.textContent = 'Envoi en cours…';
+      await sendFormData(data);
+ 
+      overlay.classList.remove('active');
       status.className = 'email-status ok';
-      status.innerHTML = `<span>✓</span><span>Rapport PDF envoyé avec succès à <strong>${email}</strong> !</span>`;
+      status.innerHTML = '<span>✓</span><span>Formulaire envoyé avec succès !</span>';
+ 
       setTimeout(() => {
-        for (let i = 1; i <= PAGES; i++) document.getElementById('page' + i).style.display = 'none';
-        document.getElementById('heroSection').style.display = 'none';
-        document.getElementById('progressSteps').parentElement.parentElement.style.display = 'none';
-        document.getElementById('successEmail').textContent = email;
+        for (let i = 1; i <= PAGES; i++) {
+          const p = document.getElementById('page' + i);
+          if (p) p.style.display = 'none';
+        }
+        const hero = document.getElementById('heroSection');
+        if (hero) hero.style.display = 'none';
+        const progressParent = document.getElementById('progressSteps')?.parentElement?.parentElement;
+        if (progressParent) progressParent.style.display = 'none';
         document.getElementById('successScreen').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 1200);
-
+      }, 1500);
+ 
     } catch (err) {
-      document.getElementById('loadingOverlay').classList.remove('active');
+      overlay.classList.remove('active');
       status.className = 'email-status err';
-      status.innerHTML = `<span>✗</span><span>Erreur : ${err.message}. Vérifiez votre connexion Gmail et réessayez.</span>`;
+      status.innerHTML = `<span>✗</span><span>Erreur : ${err.message}</span>`;
+      console.error('submitForm error:', err);
     }
   }
-
-  function addRow(tableId, cols) {
+ 
+    function addRow(tableId, cols) {
     const table = document.getElementById(tableId);
     const tbody = table.querySelector('tbody');
     const firstRow = tbody.rows[0];
@@ -1548,7 +1544,7 @@
       }
     }
   }
-
+ 
   // Pill selection
   document.addEventListener('click', function(e) {
     const pill = e.target.closest('.radio-pill');
@@ -1560,16 +1556,11 @@
       if (input) input.checked = true;
     }
     const cpill = e.target.closest('.check-pill');
-    if (cpill && cpill.id !== 'confirmPill') {
+    if (cpill) {
       cpill.classList.toggle('selected');
     }
-    if (cpill && cpill.id === 'confirmPill') {
-      const cb = document.getElementById('confirmCheck');
-      cb.checked = !cb.checked;
-      cpill.classList.toggle('selected', cb.checked);
-    }
   });
-
+ 
   buildProgress();
 </script>
 </body>
