@@ -732,9 +732,9 @@
             <td>
               <select>
                 <option value="">— Choisir —</option>
-                <option>Bon</option>
-                <option>Moyen</option>
-                <option> Faible</option>
+                <option>😊 Bon</option>
+                <option>😐 Moyen</option>
+                <option>😞 Faible</option>
               </select>
             </td>
           </tr>
@@ -744,9 +744,9 @@
             <td>
               <select>
                 <option value="">— Choisir —</option>
-                <option> Bon</option>
-                <option> Moyen</option>
-                <option>Faible</option>
+                <option>😊 Bon</option>
+                <option>😐 Moyen</option>
+                <option>😞 Faible</option>
               </select>
             </td>
           </tr>
@@ -1186,11 +1186,17 @@
       </div>
     </div>
 
+    <!-- Barre de statut envoi -->
+    <div class="email-status" id="emailStatus" style="margin-top:8px;">
+      <div class="spinner"></div>
+      <span id="emailStatusMsg">Envoi en cours…</span>
+    </div>
+
     <div class="nav-bar">
       <button class="btn btn-prev" onclick="goTo(5)">← Précédent</button>
       <span class="page-info">Page 6 sur 6</span>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-print" onclick="window.print()"> Imprimer</button>
+        <button class="btn btn-print" onclick="window.print()">🖨 Imprimer</button>
         <button class="btn btn-submit" onclick="submitForm()">✓ Soumettre le formulaire</button>
       </div>
     </div>
@@ -1203,9 +1209,9 @@
         <polyline points="7,18 14,26 29,10"/>
       </svg>
     </div>
-    <div class="success-title">Rapport envoyé avec succès !</div>
-    <div class="success-msg">Merci pour votre contribution. Le rapport PDF complet a été généré et envoyé à <strong id="successEmail"></strong>. L'équipe DigiPlus Consulting analysera vos besoins pour identifier les meilleures solutions.</div>
-    <button class="btn btn-print" onclick="window.print()" style="margin: 0 auto; display:inline-flex;">imprimer une copie</button>
+    <div class="success-title">Formulaire envoyé avec succès !</div>
+    <div class="success-msg">Merci pour votre contribution. Vos réponses ont bien été transmises à l'équipe DigiPlus Consulting qui analysera vos besoins pour identifier les meilleures solutions.</div>
+    <button class="btn btn-print" onclick="window.print()" style="margin: 0 auto; display:inline-flex;">🖨 Imprimer une copie</button>
   </div>
 
 </main>
@@ -1226,14 +1232,14 @@
 </div>
 
 <script>
-   const PAGES = 6;
+  const PAGES = 6;
   const stepLabels = ['Infos générales','Activités','Difficultés','Besoins','Collaboration','Priorisation'];
   let currentPage = 1;
- 
+
   // Set today's date
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('dateField').value = today;
- 
+
   // Build progress bar
   function buildProgress() {
     const container = document.getElementById('progressSteps');
@@ -1258,7 +1264,7 @@
       }
     }
   }
- 
+
   function goTo(n) {
     document.getElementById('page' + currentPage).classList.remove('active');
     currentPage = n;
@@ -1266,7 +1272,7 @@
     buildProgress();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
- 
+
   /* ══ DATA COLLECTION ══ */
   function collectFormData() {
     const result = { sections: [] };
@@ -1317,7 +1323,7 @@
     });
     return result;
   }
- 
+
   /* ══ PDF GENERATION ══ */
   function generatePDF(data) {
     const { jsPDF } = window.jspdf;
@@ -1326,11 +1332,11 @@
     const NAVY = [26, 58, 92];
     const W = 210; const MARGIN = 16;
     let y = 0;
- 
+
     function checkPage(needed) {
       if (y + needed > 270) { doc.addPage(); y = 20; }
     }
- 
+
     // Header band
     doc.setFillColor(...NAVY);
     doc.rect(0, 0, W, 32, 'F');
@@ -1345,7 +1351,7 @@
     doc.setTextColor(150, 200, 198);
     doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}`, W - MARGIN, 21, { align: 'right' });
     y = 42;
- 
+
     data.sections.forEach(section => {
       if (section.title.toLowerCase().includes('envoi') || section.title.toLowerCase().includes('validation')) return;
       checkPage(18);
@@ -1356,7 +1362,7 @@
       doc.setFontSize(10); doc.setFont('helvetica', 'bold');
       doc.text(section.title.toUpperCase(), MARGIN + 4, y + 2.5);
       y += 12;
- 
+
       // Fields
       section.fields.forEach(f => {
         checkPage(8);
@@ -1370,7 +1376,7 @@
         y += Math.max(7, lines.length * 5);
         checkPage(0);
       });
- 
+
       // Tables
       section.tables.forEach(tbl => {
         checkPage(20);
@@ -1388,7 +1394,7 @@
       });
       y += 4;
     });
- 
+
     // Footer on each page
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
@@ -1401,15 +1407,15 @@
       doc.text('DigiPlus Consulting — Document confidentiel à usage interne', MARGIN, 290);
       doc.text(`Page ${i} / ${totalPages}`, W - MARGIN, 290, { align: 'right' });
     }
- 
+
     return doc.output('datauristring').split(',')[1];
   }
- 
+
   /* ══ ENVOI VIA /api/send (NODEMAILER SMTP GMAIL) ══ */
   async function sendFormData(formData) {
     const dept = document.querySelector('#page1 input')?.value || 'Département';
     const date = new Date().toLocaleDateString('fr-FR');
- 
+
     // Construire le tableau HTML des données
     const sectionsHtml = formData.sections.map(s => {
       const fieldsRows = s.fields.map(f =>
@@ -1418,7 +1424,7 @@
           <td style="padding:8px 12px;color:#4A5568;border-bottom:1px solid #E8EEF4">${f.value}</td>
         </tr>`
       ).join('');
- 
+
       const tablesHtml = s.tables.map(t => {
         const headers = t.headers.map(h =>
           `<th style="background:#1A3A5C;color:white;padding:8px 12px;text-align:left;font-size:12px">${h}</th>`
@@ -1433,7 +1439,7 @@
           <tbody>${rows}</tbody>
         </table>`;
       }).join('');
- 
+
       return `
         <div style="margin-bottom:28px">
           <div style="background:#1DBDB3;color:white;padding:9px 14px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.8px">${s.title}</div>
@@ -1444,7 +1450,7 @@
           </div>
         </div>`;
     }).join('');
- 
+
     const summaryHtml = `
       <div style="font-family:Arial,sans-serif;max-width:720px;margin:auto;background:#F4F8FB;padding:20px">
         <div style="background:#1A3A5C;padding:28px 32px;border-radius:10px 10px 0 0">
@@ -1467,40 +1473,40 @@
           <p style="font-size:11px;color:rgba(255,255,255,0.45);margin:0">Document confidentiel — DigiPlus Consulting © ${new Date().getFullYear()}</p>
         </div>
       </div>`;
- 
+
     const response = await fetch('/api/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ dept, date, summaryHtml }),
     });
- 
+
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
       throw new Error(err?.error || `Erreur serveur (${response.status})`);
     }
     return true;
   }
- 
+
   /* ══ SUBMIT ══ */
   async function submitForm() {
     const status = document.getElementById('emailStatus');
     const statusMsg = document.getElementById('emailStatusMsg');
     const overlay = document.getElementById('loadingOverlay');
- 
+
     status.className = 'email-status sending';
     overlay.classList.add('active');
- 
+
     try {
       statusMsg.textContent = 'Collecte des données…';
       const data = collectFormData();
- 
+
       statusMsg.textContent = 'Envoi en cours…';
       await sendFormData(data);
- 
+
       overlay.classList.remove('active');
       status.className = 'email-status ok';
       status.innerHTML = '<span>✓</span><span>Formulaire envoyé avec succès !</span>';
- 
+
       setTimeout(() => {
         for (let i = 1; i <= PAGES; i++) {
           const p = document.getElementById('page' + i);
@@ -1513,7 +1519,7 @@
         document.getElementById('successScreen').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 1500);
- 
+
     } catch (err) {
       overlay.classList.remove('active');
       status.className = 'email-status err';
@@ -1521,7 +1527,7 @@
       console.error('submitForm error:', err);
     }
   }
- 
+
     function addRow(tableId, cols) {
     const table = document.getElementById(tableId);
     const tbody = table.querySelector('tbody');
@@ -1544,7 +1550,7 @@
       }
     }
   }
- 
+
   // Pill selection
   document.addEventListener('click', function(e) {
     const pill = e.target.closest('.radio-pill');
@@ -1560,7 +1566,7 @@
       cpill.classList.toggle('selected');
     }
   });
- 
+
   buildProgress();
 </script>
 </body>
